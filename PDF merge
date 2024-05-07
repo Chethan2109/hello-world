@@ -1,0 +1,39 @@
+import PyPDF2
+
+def merge_pdfs(input_paths, output_path):
+    pdf_writer = PyPDF2.PdfFileWriter()
+
+    for path in input_paths:
+        pdf_reader = PyPDF2.PdfFileReader(path)
+        for page_num in range(pdf_reader.numPages):
+            page = pdf_reader.getPage(page_num)
+            pdf_writer.addPage(page)
+
+    with open(output_path, 'wb') as output_file:
+        pdf_writer.write(output_file)
+
+    print(f"PDFs merged successfully into {output_path}")
+
+def split_pdf(input_path, output_prefix):
+    pdf_reader = PyPDF2.PdfFileReader(input_path)
+
+    for page_num in range(pdf_reader.numPages):
+        pdf_writer = PyPDF2.PdfFileWriter()
+        page = pdf_reader.getPage(page_num)
+        pdf_writer.addPage(page)
+
+        output_path = f"{output_prefix}_{page_num+1}.pdf"
+        with open(output_path, 'wb') as output_file:
+            pdf_writer.write(output_file)
+
+    print(f"PDF {input_path} split successfully into multiple files.")
+
+# Example usage for merging
+input_paths = ['input1.pdf', 'input2.pdf', 'input3.pdf']  # List of PDF paths to merge
+output_path = 'merged_output.pdf'  # Output path for merged PDF
+merge_pdfs(input_paths, output_path)
+
+# Example usage for splitting
+input_path = 'input.pdf'  # Input PDF path to split
+output_prefix = 'split_output'  # Prefix for output files
+split_pdf(input_path, output_prefix)
